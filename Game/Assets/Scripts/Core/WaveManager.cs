@@ -72,10 +72,16 @@ namespace EmberKeepers.Core
             isWaveInProgress = true;
             waveStartTime = Time.time;
 
-            WaveData waveData = GetCurrentWaveData();
+            WaveDataEntry waveData = GetCurrentWaveData();
             if (waveData != null)
             {
                 StartCoroutine(SpawnWave(waveData));
+            }
+            else
+            {
+                Debug.LogError($"WaveManager: 无法开始第 {currentWave} 波，数据为空！");
+                isWaveInProgress = false;
+                return;
             }
 
             OnWaveStarted?.Invoke(currentWave);
@@ -107,15 +113,27 @@ namespace EmberKeepers.Core
         {
             if (isEndlessMode)
             {
+                if (endlessWaveData == null || endlessWaveData.Count == 0)
+                {
+                    Debug.LogError("WaveManager: 无尽模式数据未加载！");
+                    return null;
+                }
                 int loopIndex = ((currentWave - maxMainWaves - 1) % endlessLoopWaves);
-                return endlessWaveData[loopIndex];
+                if (loopIndex >= 0 && loopIndex < endlessWaveData.Count)
+                    return endlessWaveData[loopIndex];
             }
             else
             {
+                if (mainWaveData == null || mainWaveData.Count == 0)
+                {
+                    Debug.LogError("WaveManager: 主线波次数据未加载！");
+                    return null;
+                }
                 if (currentWave > 0 && currentWave <= mainWaveData.Count)
                     return mainWaveData[currentWave - 1];
             }
 
+            Debug.LogWarning($"WaveManager: 无法获取第 {currentWave} 波的数据");
             return null;
         }
 

@@ -11,6 +11,7 @@ namespace EmberKeepers.UI
         public static UIManager Instance { get; private set; }
 
         [Header("UI Panels")]
+        [SerializeField] private GameObject mainMenuPanel;
         [SerializeField] private GameObject topInfoPanel;
         [SerializeField] private GameObject bottomInfoPanel;
         [SerializeField] private GameObject combatPanel;
@@ -39,10 +40,14 @@ namespace EmberKeepers.UI
             if (gameManager != null)
             {
                 gameManager.OnGameStateChanged += OnGameStateChanged;
+                // 根据当前游戏状态初始化UI
+                OnGameStateChanged(gameManager.CurrentState);
             }
-
-            // 初始化UI状态
-            ShowCombatUI();
+            else
+            {
+                // 如果GameManager不存在，默认显示主菜单UI
+                ShowMainMenuUI();
+            }
         }
 
         private void OnGameStateChanged(GameState newState)
@@ -69,6 +74,7 @@ namespace EmberKeepers.UI
         /// </summary>
         public void ShowCombatUI()
         {
+            if (mainMenuPanel) mainMenuPanel.SetActive(false);
             if (topInfoPanel) topInfoPanel.SetActive(true);
             if (bottomInfoPanel) bottomInfoPanel.SetActive(true);
             if (combatPanel) combatPanel.SetActive(true);
@@ -81,6 +87,7 @@ namespace EmberKeepers.UI
         /// </summary>
         public void ShowStrategyUI()
         {
+            if (mainMenuPanel) mainMenuPanel.SetActive(false);
             if (topInfoPanel) topInfoPanel.SetActive(true);
             if (bottomInfoPanel) bottomInfoPanel.SetActive(true);
             if (combatPanel) combatPanel.SetActive(false);
@@ -93,9 +100,12 @@ namespace EmberKeepers.UI
         /// </summary>
         public void ShowMainMenuUI()
         {
+            if (mainMenuPanel) mainMenuPanel.SetActive(true);
             if (topInfoPanel) topInfoPanel.SetActive(false);
             if (bottomInfoPanel) bottomInfoPanel.SetActive(false);
-            // TODO: 显示主菜单
+            if (combatPanel) combatPanel.SetActive(false);
+            if (strategyPanel) strategyPanel.SetActive(false);
+            if (shopPanel) shopPanel.SetActive(false);
         }
 
         /// <summary>

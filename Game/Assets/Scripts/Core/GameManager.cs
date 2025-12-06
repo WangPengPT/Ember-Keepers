@@ -46,6 +46,16 @@ namespace EmberKeepers.Core
             
             if (heroManager == null)
                 heroManager = FindFirstObjectByType<HeroManager>();
+
+            // 检查关键管理器是否存在
+            if (waveManager == null)
+                Debug.LogWarning("GameManager: WaveManager未找到，某些功能可能无法正常工作");
+            
+            if (resourceManager == null)
+                Debug.LogWarning("GameManager: ResourceManager未找到，某些功能可能无法正常工作");
+            
+            if (heroManager == null)
+                Debug.LogWarning("GameManager: HeroManager未找到，某些功能可能无法正常工作");
         }
 
         private void Start()
@@ -61,6 +71,29 @@ namespace EmberKeepers.Core
         /// </summary>
         public void StartNewGame()
         {
+            // 确保管理器已初始化
+            if (resourceManager == null)
+            {
+                resourceManager = FindFirstObjectByType<ResourceManager>();
+            }
+            
+            if (waveManager == null)
+            {
+                waveManager = FindFirstObjectByType<WaveManager>();
+            }
+
+            if (resourceManager == null)
+            {
+                Debug.LogError("GameManager: 无法开始新游戏，ResourceManager未找到！");
+                return;
+            }
+
+            if (waveManager == null)
+            {
+                Debug.LogError("GameManager: 无法开始新游戏，WaveManager未找到！");
+                return;
+            }
+
             currentState = GameState.StrategyPhase;
             resourceManager.InitializeResources();
             waveManager.ResetWaves();
@@ -75,6 +108,16 @@ namespace EmberKeepers.Core
             if (currentState != GameState.StrategyPhase)
                 return;
 
+            if (waveManager == null)
+            {
+                waveManager = FindFirstObjectByType<WaveManager>();
+                if (waveManager == null)
+                {
+                    Debug.LogError("GameManager: 无法开始战斗阶段，WaveManager未找到！");
+                    return;
+                }
+            }
+
             currentState = GameState.CombatPhase;
             waveManager.StartCurrentWave();
             OnGameStateChanged?.Invoke(currentState);
@@ -88,8 +131,20 @@ namespace EmberKeepers.Core
             if (currentState != GameState.CombatPhase)
                 return;
 
+            if (waveManager == null)
+            {
+                waveManager = FindFirstObjectByType<WaveManager>();
+                if (waveManager == null)
+                {
+                    Debug.LogWarning("GameManager: WaveManager未找到，跳过波次完成处理");
+                }
+            }
+
             currentState = GameState.StrategyPhase;
-            waveManager.OnWaveCompleted();
+            if (waveManager != null)
+            {
+                waveManager.OnWaveCompleted();
+            }
             OnGameStateChanged?.Invoke(currentState);
         }
 

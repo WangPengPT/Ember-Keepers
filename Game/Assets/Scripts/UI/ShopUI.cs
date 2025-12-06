@@ -13,9 +13,13 @@ namespace EmberKeepers.UI
     public class ShopUI : MonoBehaviour
     {
         [Header("Tab Buttons")]
+        [SerializeField] private GameObject tabButtonContainer;
         [SerializeField] private Button heroTabButton;
+        [SerializeField] private TextMeshProUGUI heroTabButtonText;
         [SerializeField] private Button attributeTabButton;
+        [SerializeField] private TextMeshProUGUI attributeTabButtonText;
         [SerializeField] private Button equipmentTabButton;
+        [SerializeField] private TextMeshProUGUI equipmentTabButtonText;
 
         [Header("Content Panels")]
         [SerializeField] private GameObject heroPanel;
@@ -27,10 +31,15 @@ namespace EmberKeepers.UI
         [SerializeField] private GameObject heroItemPrefab;
 
         [Header("Attribute Shop")]
+        [SerializeField] private GameObject attributeShopGroup;
         [SerializeField] private Button strButton;
+        [SerializeField] private TextMeshProUGUI strButtonText;
         [SerializeField] private Button agiButton;
+        [SerializeField] private TextMeshProUGUI agiButtonText;
         [SerializeField] private Button intButton;
+        [SerializeField] private TextMeshProUGUI intButtonText;
         [SerializeField] private Button elementButton;
+        [SerializeField] private TextMeshProUGUI elementButtonText;
         [SerializeField] private TextMeshProUGUI attributeCostText;
 
         [Header("Equipment Shop")]
@@ -97,6 +106,7 @@ namespace EmberKeepers.UI
             if (attributePanel) attributePanel.SetActive(false);
             if (equipmentPanel) equipmentPanel.SetActive(false);
 
+            UpdateTabButtonStates(heroTabButton, attributeTabButton, equipmentTabButton);
             RefreshHeroShop();
         }
 
@@ -105,6 +115,8 @@ namespace EmberKeepers.UI
             if (heroPanel) heroPanel.SetActive(false);
             if (attributePanel) attributePanel.SetActive(true);
             if (equipmentPanel) equipmentPanel.SetActive(false);
+
+            UpdateTabButtonStates(attributeTabButton, heroTabButton, equipmentTabButton);
         }
 
         public void ShowEquipmentTab()
@@ -113,7 +125,37 @@ namespace EmberKeepers.UI
             if (attributePanel) attributePanel.SetActive(false);
             if (equipmentPanel) equipmentPanel.SetActive(true);
 
+            UpdateTabButtonStates(equipmentTabButton, heroTabButton, attributeTabButton);
             RefreshEquipmentShop();
+        }
+
+        /// <summary>
+        /// 更新标签按钮的选中状态
+        /// </summary>
+        private void UpdateTabButtonStates(Button activeButton, Button inactiveButton1, Button inactiveButton2)
+        {
+            // 激活的按钮
+            if (activeButton != null)
+            {
+                var colors = activeButton.colors;
+                colors.normalColor = new Color(0.4f, 0.7f, 1f); // 蓝色表示选中
+                activeButton.colors = colors;
+            }
+
+            // 未激活的按钮
+            if (inactiveButton1 != null)
+            {
+                var colors = inactiveButton1.colors;
+                colors.normalColor = Color.white;
+                inactiveButton1.colors = colors;
+            }
+
+            if (inactiveButton2 != null)
+            {
+                var colors = inactiveButton2.colors;
+                colors.normalColor = Color.white;
+                inactiveButton2.colors = colors;
+            }
         }
 
         private void RefreshHeroShop()

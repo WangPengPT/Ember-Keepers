@@ -12,16 +12,27 @@ namespace EmberKeepers.UI
     public class TopInfoPanel : MonoBehaviour
     {
         [Header("Base Core Info")]
+        [SerializeField] private GameObject coreHealthGroup;
         [SerializeField] private Slider coreHealthBar;
         [SerializeField] private TextMeshProUGUI coreHealthText;
+        [SerializeField] private Image coreHealthIcon;
 
         [Header("Wave Info")]
+        [SerializeField] private GameObject waveInfoGroup;
         [SerializeField] private TextMeshProUGUI waveNumberText;
         [SerializeField] private TextMeshProUGUI waveStatusText;
+        [SerializeField] private Image waveStatusIcon;
 
         [Header("Resources")]
+        [SerializeField] private GameObject resourcesGroup;
+        [SerializeField] private GameObject goldGroup;
+        [SerializeField] private Image goldIcon;
         [SerializeField] private TextMeshProUGUI goldText;
+        [SerializeField] private GameObject stardustGroup;
+        [SerializeField] private Image stardustIcon;
         [SerializeField] private TextMeshProUGUI stardustShardsText;
+        [SerializeField] private GameObject starfireGroup;
+        [SerializeField] private Image starfireIcon;
         [SerializeField] private TextMeshProUGUI starfireEssenceText;
 
         private ResourceManager resourceManager;
@@ -91,6 +102,19 @@ namespace EmberKeepers.UI
             if (coreHealthBar != null)
             {
                 coreHealthBar.value = current / max;
+                
+                // 根据生命值百分比改变颜色
+                var fillImage = coreHealthBar.fillRect?.GetComponent<Image>();
+                if (fillImage != null)
+                {
+                    float percent = current / max;
+                    if (percent > 0.6f)
+                        fillImage.color = Color.green;
+                    else if (percent > 0.3f)
+                        fillImage.color = Color.yellow;
+                    else
+                        fillImage.color = Color.red;
+                }
             }
 
             if (coreHealthText != null)
@@ -116,7 +140,12 @@ namespace EmberKeepers.UI
             if (waveStatusText != null)
             {
                 waveStatusText.text = "战斗中";
-                waveStatusText.color = Color.red;
+                waveStatusText.color = new Color(1f, 0.3f, 0.3f); // 更柔和的红色
+            }
+
+            if (waveStatusIcon != null)
+            {
+                waveStatusIcon.color = new Color(1f, 0.3f, 0.3f);
             }
         }
 
@@ -125,7 +154,12 @@ namespace EmberKeepers.UI
             if (waveStatusText != null)
             {
                 waveStatusText.text = "准备阶段";
-                waveStatusText.color = Color.green;
+                waveStatusText.color = new Color(0.3f, 1f, 0.3f); // 更柔和的绿色
+            }
+
+            if (waveStatusIcon != null)
+            {
+                waveStatusIcon.color = new Color(0.3f, 1f, 0.3f);
             }
         }
 
@@ -133,7 +167,7 @@ namespace EmberKeepers.UI
         {
             if (goldText != null)
             {
-                goldText.text = $"金币: {amount}";
+                goldText.text = FormatNumber(amount);
             }
         }
 
@@ -141,7 +175,7 @@ namespace EmberKeepers.UI
         {
             if (stardustShardsText != null)
             {
-                stardustShardsText.text = $"星火碎片: {amount}";
+                stardustShardsText.text = FormatNumber(amount);
             }
         }
 
@@ -149,8 +183,16 @@ namespace EmberKeepers.UI
         {
             if (starfireEssenceText != null)
             {
-                starfireEssenceText.text = $"星火精粹: {amount}";
+                starfireEssenceText.text = FormatNumber(amount);
             }
+        }
+
+        /// <summary>
+        /// 格式化数字显示（添加千位分隔符）
+        /// </summary>
+        private string FormatNumber(int number)
+        {
+            return number.ToString("N0");
         }
     }
 }

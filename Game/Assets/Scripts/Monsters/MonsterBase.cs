@@ -70,9 +70,34 @@ namespace EmberKeepers.Monsters
 
         protected virtual void LoadMonsterData(string id, int level)
         {
-            // TODO: 从Excel数据表加载
-            // 根据等级调整属性
-            ScaleStatsByLevel(level);
+            // 从数据表加载
+            if (Data.DataManager.Instance != null)
+            {
+                MonsterData data = Data.DataManager.Instance.GetMonsterData(id);
+                if (data != null)
+                {
+                    monsterName = data.monsterName;
+                    family = data.family;
+                    isElite = data.isElite;
+                    isBoss = data.isBoss;
+                    
+                    // 基础属性
+                    maxHealth = data.baseHealth;
+                    attackDamage = data.baseAttackDamage;
+                    attackSpeed = data.baseAttackSpeed;
+                    moveSpeed = data.baseMoveSpeed;
+                    
+                    // 元素抗性
+                    fireResistance = data.fireResistance;
+                    iceResistance = data.iceResistance;
+                    thunderResistance = data.thunderResistance;
+                    earthResistance = data.earthResistance;
+                    physicalResistance = data.physicalResistance;
+                    
+                    // 根据等级调整属性
+                    ScaleStatsByLevel(level);
+                }
+            }
         }
 
         protected virtual void ScaleStatsByLevel(int level)
@@ -190,6 +215,7 @@ namespace EmberKeepers.Monsters
 
     public enum MonsterFamily
     {
+        None,         // 无家族（精英怪/Boss）
         Whisper,      // 低语者
         Corroder,     // 爬行者
         Bonewall,     // 护盾者

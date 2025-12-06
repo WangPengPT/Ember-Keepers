@@ -11,27 +11,42 @@ namespace EmberKeepers.UI
     public class HeroDetailUI : MonoBehaviour
     {
         [Header("Hero Info")]
+        [SerializeField] private Image heroPortrait;
         [SerializeField] private TextMeshProUGUI heroNameText;
         [SerializeField] private TextMeshProUGUI heroClassText;
         [SerializeField] private TextMeshProUGUI elementTypeText;
+        [SerializeField] private Image elementTypeIcon;
 
         [Header("Stats")]
+        [SerializeField] private GameObject statsGroup;
         [SerializeField] private Slider healthBar;
         [SerializeField] private TextMeshProUGUI healthText;
+        [SerializeField] private Image healthIcon;
         [SerializeField] private Slider energyBar;
         [SerializeField] private TextMeshProUGUI energyText;
+        [SerializeField] private Image energyIcon;
 
         [Header("Attributes")]
+        [SerializeField] private GameObject attributesGroup;
         [SerializeField] private TextMeshProUGUI strengthText;
+        [SerializeField] private Image strengthIcon;
         [SerializeField] private TextMeshProUGUI agilityText;
+        [SerializeField] private Image agilityIcon;
         [SerializeField] private TextMeshProUGUI intelligenceText;
+        [SerializeField] private Image intelligenceIcon;
         [SerializeField] private TextMeshProUGUI elementMasteryText;
+        [SerializeField] private Image elementMasteryIcon;
 
         [Header("Combat Stats")]
+        [SerializeField] private GameObject combatStatsGroup;
         [SerializeField] private TextMeshProUGUI attackDamageText;
+        [SerializeField] private Image attackDamageIcon;
         [SerializeField] private TextMeshProUGUI attackSpeedText;
+        [SerializeField] private Image attackSpeedIcon;
         [SerializeField] private TextMeshProUGUI physicalDefenseText;
+        [SerializeField] private Image physicalDefenseIcon;
         [SerializeField] private TextMeshProUGUI elementResistanceText;
+        [SerializeField] private Image elementResistanceIcon;
 
         [Header("Equipment Slots")]
         [SerializeField] private Image[] equipmentSlotImages;
@@ -63,20 +78,20 @@ namespace EmberKeepers.UI
 
             // 基础信息
             if (heroNameText) heroNameText.text = currentHero.HeroName;
-            if (heroClassText) heroClassText.text = currentHero.HeroClass.ToString();
-            if (elementTypeText) elementTypeText.text = currentHero.ElementType.ToString();
+            if (heroClassText) heroClassText.text = $"职业: {currentHero.HeroClass}";
+            if (elementTypeText) elementTypeText.text = $"元素: {currentHero.ElementType}";
 
-            // 属性
-            if (strengthText) strengthText.text = $"力量: {currentHero.Strength}";
-            if (agilityText) agilityText.text = $"敏捷: {currentHero.Agility}";
-            if (intelligenceText) intelligenceText.text = $"智力: {currentHero.Intelligence}";
-            if (elementMasteryText) elementMasteryText.text = $"元素专精: {currentHero.ElementMastery}";
+            // 属性 - 使用更简洁的格式
+            if (strengthText) strengthText.text = $"{currentHero.Strength}";
+            if (agilityText) agilityText.text = $"{currentHero.Agility}";
+            if (intelligenceText) intelligenceText.text = $"{currentHero.Intelligence}";
+            if (elementMasteryText) elementMasteryText.text = $"{currentHero.ElementMastery}";
 
-            // 战斗属性
-            if (attackDamageText) attackDamageText.text = $"攻击力: {currentHero.AttackDamage:F1}";
-            if (attackSpeedText) attackSpeedText.text = $"攻速: {currentHero.AttackSpeed:F2}";
-            if (physicalDefenseText) physicalDefenseText.text = $"物防: {currentHero.physicalDefense:F1}";
-            if (elementResistanceText) elementResistanceText.text = $"元抗: {currentHero.elementResistance:F1}";
+            // 战斗属性 - 使用更简洁的格式
+            if (attackDamageText) attackDamageText.text = $"{currentHero.AttackDamage:F1}";
+            if (attackSpeedText) attackSpeedText.text = $"{currentHero.AttackSpeed:F2}";
+            if (physicalDefenseText) physicalDefenseText.text = $"{currentHero.physicalDefense:F1}";
+            if (elementResistanceText) elementResistanceText.text = $"{currentHero.elementResistance:F1}";
 
             // 技能
             if (currentHero.ActiveSkill != null)
@@ -94,7 +109,20 @@ namespace EmberKeepers.UI
             // 生命值
             if (healthBar)
             {
-                healthBar.value = currentHero.CurrentHealth / currentHero.MaxHealth;
+                float healthPercent = currentHero.CurrentHealth / currentHero.MaxHealth;
+                healthBar.value = healthPercent;
+                
+                // 根据生命值百分比改变颜色
+                var fillImage = healthBar.fillRect?.GetComponent<Image>();
+                if (fillImage != null)
+                {
+                    if (healthPercent > 0.6f)
+                        fillImage.color = Color.green;
+                    else if (healthPercent > 0.3f)
+                        fillImage.color = Color.yellow;
+                    else
+                        fillImage.color = Color.red;
+                }
             }
             if (healthText)
             {
@@ -105,6 +133,13 @@ namespace EmberKeepers.UI
             if (energyBar)
             {
                 energyBar.value = currentHero.CurrentEnergy / currentHero.MaxEnergy;
+                
+                // 能量条使用蓝色
+                var fillImage = energyBar.fillRect?.GetComponent<Image>();
+                if (fillImage != null)
+                {
+                    fillImage.color = new Color(0.3f, 0.6f, 1f); // 蓝色
+                }
             }
             if (energyText)
             {

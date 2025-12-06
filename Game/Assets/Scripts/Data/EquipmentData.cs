@@ -14,7 +14,7 @@ namespace EmberKeepers.Data
         public string equipmentName;
         public Rarity rarity;
         public EquipmentType equipmentType;
-        public HeroClass requiredClass; // None表示全职业
+        public HeroClass requiredClass = (HeroClass)(-1); // -1表示全职业
 
         [Header("Base Stats")]
         public float attackDamage = 0f;

@@ -19,6 +19,8 @@ namespace EmberKeepers.UI
         [Header("Default Panel - Deployed Heroes")]
         [SerializeField] private Transform heroIconContainer;
         [SerializeField] private GameObject heroIconPrefab;
+        [SerializeField] private ScrollRect heroScrollRect;
+        [SerializeField] private TextMeshProUGUI noHeroesText;
 
         [Header("Hero Detail Panel")]
         [SerializeField] private HeroDetailUI heroDetailUI;
@@ -53,6 +55,12 @@ namespace EmberKeepers.UI
 
         private void DetectClick()
         {
+            if (Camera.main == null)
+            {
+                Debug.LogWarning("BottomInfoPanel: 主摄像机未找到，无法检测点击");
+                return;
+            }
+
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
 
@@ -87,6 +95,8 @@ namespace EmberKeepers.UI
             if (defaultPanel) defaultPanel.SetActive(true);
             if (heroDetailPanel) heroDetailPanel.SetActive(false);
             if (baseCorePanel) baseCorePanel.SetActive(false);
+            
+            UpdateNoHeroesText();
         }
 
         /// <summary>
@@ -132,6 +142,8 @@ namespace EmberKeepers.UI
                     heroIcons.Add(iconUI);
                 }
             }
+            
+            UpdateNoHeroesText();
         }
 
         private void OnHeroUndeployed(HeroBase hero)
@@ -142,6 +154,19 @@ namespace EmberKeepers.UI
             {
                 heroIcons.Remove(iconToRemove);
                 Destroy(iconToRemove.gameObject);
+            }
+            
+            UpdateNoHeroesText();
+        }
+
+        /// <summary>
+        /// 更新"无英雄"提示文本
+        /// </summary>
+        private void UpdateNoHeroesText()
+        {
+            if (noHeroesText != null)
+            {
+                noHeroesText.gameObject.SetActive(heroIcons.Count == 0);
             }
         }
     }

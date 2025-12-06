@@ -36,6 +36,12 @@ namespace EmberKeepers.Deployment
             if (gameManager != null && !gameManager.IsPaused)
                 return; // 只能在策略阶段部署
 
+            if (Camera.main == null)
+            {
+                Debug.LogWarning("DeploymentSystem: 主摄像机未找到，无法开始拖拽");
+                return;
+            }
+
             // 检测是否点击了英雄
             Ray ray = Camera.main.ScreenPointToRay(eventData.position);
             RaycastHit hit;
@@ -60,6 +66,9 @@ namespace EmberKeepers.Deployment
             if (!isDragging || draggedHero == null)
                 return;
 
+            if (Camera.main == null)
+                return;
+
             Ray ray = Camera.main.ScreenPointToRay(eventData.position);
             RaycastHit hit;
             
@@ -80,6 +89,15 @@ namespace EmberKeepers.Deployment
         {
             if (!isDragging || draggedHero == null)
                 return;
+
+            if (Camera.main == null)
+            {
+                // 没有摄像机，返回原位置
+                draggedHero.transform.position = originalPosition;
+                draggedHero = null;
+                isDragging = false;
+                return;
+            }
 
             Ray ray = Camera.main.ScreenPointToRay(eventData.position);
             RaycastHit hit;

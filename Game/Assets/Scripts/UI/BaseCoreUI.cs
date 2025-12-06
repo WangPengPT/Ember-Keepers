@@ -11,20 +11,32 @@ namespace EmberKeepers.UI
     public class BaseCoreUI : MonoBehaviour
     {
         [Header("Core Info")]
+        [SerializeField] private GameObject coreInfoGroup;
+        [SerializeField] private Image coreIcon;
         [SerializeField] private Slider healthBar;
         [SerializeField] private TextMeshProUGUI healthText;
+        [SerializeField] private Image healthIcon;
 
         [Header("Upgrades")]
+        [SerializeField] private GameObject upgradesGroup;
         [SerializeField] private Button upgradeHealthButton;
+        [SerializeField] private TextMeshProUGUI upgradeHealthCostText;
         [SerializeField] private Button upgradeEnergyButton;
+        [SerializeField] private TextMeshProUGUI upgradeEnergyCostText;
         [SerializeField] private Button upgradeElementButton;
+        [SerializeField] private TextMeshProUGUI upgradeElementCostText;
 
         [Header("Active Abilities")]
+        [SerializeField] private GameObject abilitiesGroup;
         [SerializeField] private Button purificationStrikeButton;
         [SerializeField] private TextMeshProUGUI purificationStrikeText;
+        [SerializeField] private Image purificationStrikeIcon;
+        [SerializeField] private Slider purificationStrikeCooldownBar;
 
         [Header("Defense Systems")]
+        [SerializeField] private GameObject defenseGroup;
         [SerializeField] private Toggle healingDroneToggle;
+        [SerializeField] private TextMeshProUGUI healingDroneStatusText;
 
         private BaseCore currentCore;
 
@@ -63,7 +75,20 @@ namespace EmberKeepers.UI
             // 生命值
             if (healthBar)
             {
-                healthBar.value = currentCore.HealthPercent;
+                float healthPercent = currentCore.HealthPercent;
+                healthBar.value = healthPercent;
+                
+                // 根据生命值百分比改变颜色
+                var fillImage = healthBar.fillRect?.GetComponent<Image>();
+                if (fillImage != null)
+                {
+                    if (healthPercent > 0.6f)
+                        fillImage.color = Color.green;
+                    else if (healthPercent > 0.3f)
+                        fillImage.color = Color.yellow;
+                    else
+                        fillImage.color = Color.red;
+                }
             }
             if (healthText)
             {
@@ -80,10 +105,27 @@ namespace EmberKeepers.UI
                 if (currentCore.CanUsePurificationStrike)
                 {
                     purificationStrikeText.text = "净化冲击 (可用)";
+                    purificationStrikeText.color = Color.green;
                 }
                 else
                 {
                     purificationStrikeText.text = "净化冲击 (冷却中)";
+                    purificationStrikeText.color = Color.gray;
+                }
+            }
+
+            // 治疗无人机状态
+            if (healingDroneStatusText)
+            {
+                if (currentCore.hasHealingDrone)
+                {
+                    healingDroneStatusText.text = "已激活";
+                    healingDroneStatusText.color = Color.green;
+                }
+                else
+                {
+                    healingDroneStatusText.text = "未激活";
+                    healingDroneStatusText.color = Color.gray;
                 }
             }
         }

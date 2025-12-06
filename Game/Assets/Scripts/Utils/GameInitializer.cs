@@ -2,6 +2,7 @@ using UnityEngine;
 using EmberKeepers.Core;
 using EmberKeepers.Data;
 using EmberKeepers.MetaProgression;
+using EmberKeepers.Localization;
 
 namespace EmberKeepers.Utils
 {
@@ -16,6 +17,7 @@ namespace EmberKeepers.Utils
         [SerializeField] private GameObject metaProgressionManagerPrefab;
         [SerializeField] private GameObject objectPoolPrefab;
         [SerializeField] private GameObject audioManagerPrefab;
+        [SerializeField] private GameObject localizationManagerPrefab;
 
         private void Awake()
         {
@@ -24,6 +26,12 @@ namespace EmberKeepers.Utils
 
         private void InitializeManagers()
         {
+            // 首先初始化LocalizationManager（其他UI可能需要它）
+            if (LocalizationManager.Instance == null && localizationManagerPrefab != null)
+            {
+                Instantiate(localizationManagerPrefab);
+            }
+
             // 初始化DataManager
             if (DataManager.Instance == null && dataManagerPrefab != null)
             {

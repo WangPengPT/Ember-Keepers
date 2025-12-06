@@ -11,10 +11,12 @@ namespace EmberKeepers.UI
     public class HeroIconUI : MonoBehaviour
     {
         [SerializeField] private Image heroIcon;
+        [SerializeField] private Image heroIconBackground;
         [SerializeField] private Slider healthBar;
         [SerializeField] private Slider energyBar;
         [SerializeField] private TextMeshProUGUI heroNameText;
         [SerializeField] private Image deathOverlay;
+        [SerializeField] private Button iconButton;
 
         private HeroBase hero;
 
@@ -52,13 +54,33 @@ namespace EmberKeepers.UI
             // 生命值
             if (healthBar)
             {
-                healthBar.value = hero.CurrentHealth / hero.MaxHealth;
+                float healthPercent = hero.CurrentHealth / hero.MaxHealth;
+                healthBar.value = healthPercent;
+                
+                // 根据生命值百分比改变颜色
+                var fillImage = healthBar.fillRect?.GetComponent<Image>();
+                if (fillImage != null)
+                {
+                    if (healthPercent > 0.6f)
+                        fillImage.color = Color.green;
+                    else if (healthPercent > 0.3f)
+                        fillImage.color = Color.yellow;
+                    else
+                        fillImage.color = Color.red;
+                }
             }
 
             // 能量
             if (energyBar)
             {
                 energyBar.value = hero.CurrentEnergy / hero.MaxEnergy;
+                
+                // 能量条使用蓝色
+                var fillImage = energyBar.fillRect?.GetComponent<Image>();
+                if (fillImage != null)
+                {
+                    fillImage.color = new Color(0.3f, 0.6f, 1f); // 蓝色
+                }
             }
         }
 
